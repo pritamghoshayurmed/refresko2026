@@ -3,6 +3,22 @@
   padding: 120px 5%;
   position: relative;
   overflow: hidden;
+  background: radial-gradient(circle at right, rgba(255, 0, 51, 0.08), transparent 50%);
+}
+
+.about::before {
+  content: '';
+  position: absolute;
+  top: 20%;
+  right: -10%;
+  width: 450px;
+  height: 450px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 0, 51, 0.2), transparent 70%);
+  filter: blur(90px);
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .about-bg-text {
@@ -10,7 +26,7 @@
   right: -9%;
   transform: rotate(-90deg);
   font-size: clamp(2.5rem, 5vw, 5rem);
-  -webkit-text-stroke: 1px rgba(240, 8, 8, 0.996);
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.996);
   color: rgba(255, 255, 255, 0.495);
   text-shadow: 0 0 28px rgba(229, 230, 224, 0.429);
   animation: typing 3.5s steps(5, end) ease-out;

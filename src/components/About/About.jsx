@@ -53,7 +53,7 @@ const About = () => {
               whileHover={{ scale: 1.05 }}
               transition={{ type: 'spring', stiffness: 300 }}
             >
-              <span className="stat-number neon-text">50+</span>
+              <span className="stat-number neon-text">15+</span>
               <span className="stat-label">Events</span>
             </motion.div>
             <motion.div
@@ -61,7 +61,7 @@ const About = () => {
               whileHover={{ scale: 1.05 }}
               transition={{ type: 'spring', stiffness: 300 }}
             >
-              <span className="stat-number neon-text">10K+</span>
+              <span className="stat-number neon-text">1K+</span>
               <span className="stat-label">Participants</span>
             </motion.div>
             <motion.div
@@ -69,7 +69,7 @@ const About = () => {
               whileHover={{ scale: 1.05 }}
               transition={{ type: 'spring', stiffness: 300 }}
             >
-              <span className="stat-number neon-text">₹15L+</span>
+              <span className="stat-number neon-text">₹50k+</span>
               <span className="stat-label">Prize Pool</span>
             </motion.div>
           </div>

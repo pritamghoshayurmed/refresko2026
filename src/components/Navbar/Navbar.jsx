@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { gsap } from 'gsap'
 import './Navbar.css'
@@ -6,7 +7,11 @@ import './Navbar.css'
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const logoRef = useRef(null)
-  const navLinks = ['HOME', 'EVENTS', 'GALLERY']
+  const navLinks = [
+    { label: 'HOME', href: '/#home' },
+    { label: 'EVENTS', to: '/events' },
+    { label: 'GALLERY', to: '/gallery' }
+  ]
 
   useEffect(() => {
     const handleScroll = () => {
@@ -54,15 +59,22 @@ const Navbar = () => {
         <ul className="nav-links">
           {navLinks.map((link, index) => (
             <motion.li
-              key={link}
+              key={link.label}
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
             >
-              <a href={`#${link.toLowerCase().replace(' ', '-')}`} className="nav-link interactive">
-                {link}
-                <span className="link-underline" />
-              </a>
+              {link.to ? (
+                <Link className="nav-link interactive" to={link.to}>
+                  {link.label}
+                  <span className="link-underline" />
+                </Link>
+              ) : (
+                <a className="nav-link interactive" href={link.href}>
+                  {link.label}
+                  <span className="link-underline" />
+                </a>
+              )}
             </motion.li>
           ))}
         </ul>

@@ -3,10 +3,29 @@
   padding: 100px 5%;
   position: relative;
   overflow: hidden;
+  background: radial-gradient(ellipse at center, rgba(255, 0, 51, 0.05), transparent 50%);
+}
+
+.performers::after {
+  content: '';
+  position: absolute;
+  bottom: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 550px;
+  height: 550px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 0, 51, 0.15), transparent 70%);
+  filter: blur(120px);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .performers-header {
   margin-bottom: 60px;
+  position: relative;
+  z-index: 10;
 }
 
 .performers-label {
@@ -71,6 +90,30 @@
   z-index: 10;
 }
 
+.performer-year-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  z-index: 15;
+  font-family: var(--font-heading);
+  font-size: 3rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 0 20px rgba(255, 0, 51, 0.8),
+               0 0 40px rgba(255, 0, 51, 0.6),
+               0 4px 20px rgba(0, 0, 0, 0.8);
+  letter-spacing: 0.15em;
+  opacity: 0;
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+}
+
+.performer-card:hover .performer-year-badge {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
 .performer-image-wrapper {
   position: relative;
   width: 100%;
@@ -130,6 +173,7 @@
   font-weight: 700;
   color: var(--color-secondary);
   margin-bottom: 5px;
+  letter-spacing: 0.05em;
 }
 
 .performer-role {

@@ -7,31 +7,29 @@ const performers = [
     id: 1,
     name: 'ARIJIT SINGH',
     role: 'Playback Singer',
-    image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400'
+    year: '2011',
+    image: '/arijitsingh2011.jpg'
   },
   {
     id: 2,
-    name: 'DJ NUCLEYA',
-    role: 'Electronic Artist',
-    image: 'https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=400'
+    name: 'ASH KING',
+    role: 'Playback Singer',
+    year: '2023',
+    image: '/ashking2023.jpg'
   },
   {
     id: 3,
-    name: 'ZAKIR KHAN',
-    role: 'Stand-up Comedian',
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400'
+    name: 'SNIGDHAJIT BHOWMIK',
+    role: 'Performer',
+    year: '2024',
+    image: '/snigdhajitbhowmik2024.jpg'
   },
   {
     id: 4,
-    name: 'SUNIDHI CHAUHAN',
-    role: 'Playback Singer',
-    image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400'
-  },
-  {
-    id: 5,
-    name: 'AMIT TRIVEDI',
-    role: 'Music Composer',
-    image: 'https://images.unsplash.com/photo-1468164016595-6108e4c60c8b?w=400'
+    name: 'NANDY SISTERS',
+    role: 'Musical Duo',
+    year: '2025',
+    image: '/nandysisters2025.jpg'
   }
 ]
 
@@ -84,6 +82,7 @@ const Performers = () => {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 whileHover={{ y: -10 }}
               >
+                <div className="performer-year-badge">{performer.year}</div>
                 <div className="performer-image-wrapper">
                   <img
                     src={performer.image}

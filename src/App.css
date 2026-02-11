@@ -66,10 +66,10 @@
 /* Neon Glow */
 .neon-text {
   text-shadow: 
-    0 0 5px var(--color-primary),
+    0 0 2px var(--color-primary),
+    0 0 4px var(--color-primary),
     0 0 10px var(--color-primary),
-    0 0 20px var(--color-primary),
-    0 0 40px var(--color-primary);
+    0 0 20px var(--color-primary);
 }
 
 /* Glass Effect */

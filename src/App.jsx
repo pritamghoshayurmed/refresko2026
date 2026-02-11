@@ -8,7 +8,6 @@ import Performers from './components/Performers/Performers'
 import Events from './components/Events/Events'
 import FAQ from './components/FAQ/FAQ'
 import Footer from './components/Footer/Footer'
-import ParticleCanvas from './components/ParticleCanvas/ParticleCanvas'
 import CustomCursor from './components/CustomCursor/CustomCursor'
 import './App.css'
 
@@ -44,7 +43,6 @@ function App() {
     <div className="app">
       <CustomCursor />
       <div className="hex-grid-overlay" />
-      <ParticleCanvas />
       <div ref={mainRef} className="main-content">
         <Navbar />
         <Hero />
