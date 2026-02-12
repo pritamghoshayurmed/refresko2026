@@ -70,6 +70,7 @@
   padding: 50px 0;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  scroll-behavior: smooth;
 }
 
 .performers-scroll::-webkit-scrollbar {
@@ -202,25 +203,104 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .performers {
     padding: 80px 20px;
   }
 
   .performers-grid {
-    gap: 25px;
-    padding: 0 20px;
+    gap: 30px;
+    padding: 0 30px;
   }
 
   .performer-card {
-    width: 220px;
+    width: 260px;
+  }
+}
+
+@media (max-width: 768px) {
+  .performers {
+    padding: 60px 0;
+  }
+
+  .performers-header {
+    padding: 0 20px;
+    margin-bottom: 40px;
+  }
+
+  .performers-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 40px 0;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .performers-grid {
+    gap: 20px;
+    padding: 0 calc(50vw - 140px);
+    justify-content: flex-start;
+  }
+
+  .performer-card {
+    width: 280px;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
   }
 
   .performer-image-wrapper {
-    height: 280px;
+    height: 360px;
   }
 
   .performers-indicator {
     display: none;
+  }
+
+  .dotted-path {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .performers {
+    padding: 60px 0;
+  }
+
+  .performers-header {
+    padding: 0 15px;
+  }
+
+  .performers-label {
+    font-size: 1.5rem;
+  }
+
+  .performers-title {
+    font-size: 2.5rem;
+  }
+
+  .performers-grid {
+    gap: 15px;
+    padding: 0 calc(50vw - 130px);
+  }
+
+  .performer-card {
+    width: 260px;
+  }
+
+  .performer-image-wrapper {
+    height: 340px;
+  }
+
+  .performer-year-badge {
+    font-size: 2.5rem;
+  }
+
+  .performer-name {
+    font-size: 1.1rem;
+  }
+
+  .performer-role {
+    font-size: 0.85rem;
   }
 }

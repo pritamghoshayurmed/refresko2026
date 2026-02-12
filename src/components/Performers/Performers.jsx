@@ -35,6 +35,7 @@ const performers = [
 
 const Performers = () => {
   const sectionRef = useRef(null)
+  const scrollRef = useRef(null)
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' })
   const [activePerformer, setActivePerformer] = useState(0)
 
@@ -46,6 +47,29 @@ const Performers = () => {
 
     return () => clearInterval(interval)
   }, [])
+
+  useEffect(() => {
+    // Auto-scroll to active performer on mobile
+    if (scrollRef.current) {
+      const container = scrollRef.current
+      const cards = container.querySelectorAll('.performer-card')
+      
+      if (cards[activePerformer]) {
+        const card = cards[activePerformer]
+        const containerWidth = container.offsetWidth
+        const cardLeft = card.offsetLeft
+        const cardWidth = card.offsetWidth
+        
+        // Calculate scroll position to center the card
+        const scrollPosition = cardLeft - (containerWidth / 2) + (cardWidth / 2)
+        
+        container.scrollTo({
+          left: scrollPosition,
+          behavior: 'smooth'
+        })
+      }
+    }
+  }, [activePerformer])
 
   return (
     <section id="performers" ref={sectionRef} className="performers">
@@ -81,7 +105,7 @@ const Performers = () => {
           </svg>
         </div>
 
-        <div className="performers-scroll">
+        <div className="performers-scroll" ref={scrollRef}>
           <div className="performers-grid">
             {performers.map((performer, index) => (
               <motion.div
