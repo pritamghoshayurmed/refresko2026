@@ -6,6 +6,7 @@ import Hero from './components/Hero/Hero'
 import About from './components/About/About'
 import Performers from './components/Performers/Performers'
 import Events from './components/Events/Events'
+import TechTeam from './components/TechTeam/TechTeam'
 import FAQ from './components/FAQ/FAQ'
 import Footer from './components/Footer/Footer'
 import CustomCursor from './components/CustomCursor/CustomCursor'
@@ -49,6 +50,7 @@ function App() {
         <About />
         <Performers />
         <Events />
+        <TechTeam />
         <FAQ />
         <Footer />
       </div>
