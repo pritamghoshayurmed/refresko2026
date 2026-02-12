@@ -109,7 +109,8 @@
   pointer-events: none;
 }
 
-.performer-card:hover .performer-year-badge {
+.performer-card:hover .performer-year-badge,
+.performer-card.active .performer-year-badge {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
 }
@@ -131,7 +132,8 @@
   transition: all 0.5s ease;
 }
 
-.performer-card:hover .performer-image {
+.performer-card:hover .performer-image,
+.performer-card.active .performer-image {
   filter: grayscale(0%);
   transform: scale(1.1);
 }
@@ -151,7 +153,8 @@
   transition: all 0.4s ease;
 }
 
-.performer-card:hover .performer-overlay {
+.performer-card:hover .performer-overlay,
+.performer-card.active .performer-overlay {
   opacity: 1;
   transform: translateY(0);
 }
@@ -162,7 +165,8 @@
   transition: all 0.4s ease 0.1s;
 }
 
-.performer-card:hover .performer-info {
+.performer-card:hover .performer-info,
+.performer-card.active .performer-info {
   transform: translateX(0);
   opacity: 1;
 }

@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { motion, useInView } from 'framer-motion'
 import './Performers.css'
 
@@ -36,6 +36,16 @@ const performers = [
 const Performers = () => {
   const sectionRef = useRef(null)
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' })
+  const [activePerformer, setActivePerformer] = useState(0)
+
+  useEffect(() => {
+    // Cycle through performers every 2 seconds
+    const interval = setInterval(() => {
+      setActivePerformer((prev) => (prev + 1) % performers.length)
+    }, 2000)
+
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <section id="performers" ref={sectionRef} className="performers">
@@ -76,7 +86,7 @@ const Performers = () => {
             {performers.map((performer, index) => (
               <motion.div
                 key={performer.id}
-                className="performer-card interactive"
+                className={`performer-card interactive ${activePerformer === index ? 'active' : ''}`}
                 initial={{ opacity: 0, y: 50 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: index * 0.1 }}

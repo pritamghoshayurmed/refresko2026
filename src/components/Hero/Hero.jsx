@@ -42,13 +42,19 @@ const Hero = () => {
   }, [chars, targetText])
 
   useEffect(() => {
-    // Decoding text animation
+    // Initial decoding text animation
     startDecode()
+
+    // Repeat animation every 3 seconds
+    const repeatInterval = setInterval(() => {
+      startDecode()
+    }, 3000)
 
     return () => {
       if (decodeTimerRef.current) {
         clearInterval(decodeTimerRef.current)
       }
+      clearInterval(repeatInterval)
     }
   }, [startDecode])
 
@@ -108,7 +114,6 @@ const Hero = () => {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, delay: 1 }}
-          onMouseEnter={startDecode}
         >
           {displayText}
         </motion.h1>
