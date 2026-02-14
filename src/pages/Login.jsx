@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import './Login.css'
 
@@ -9,6 +9,7 @@ const VALID_PASSWORD = 'Student@12345'
 
 const Login = () => {
   const navigate = useNavigate()
+  const location = useLocation()
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -18,21 +19,31 @@ const Login = () => {
 
   useEffect(() => {
     document.body.classList.add('system-cursor')
+    const params = new URLSearchParams(location.search)
+    const isAdminLoginMode = params.get('role') === 'admin'
 
     // Check if already authenticated
+    const isAdminAuthenticated = localStorage.getItem('adminAuthenticated')
     const isAuthenticated = localStorage.getItem('isAuthenticated')
     const profileCompleted = localStorage.getItem('profileCompleted')
-    
-    if (isAuthenticated && profileCompleted === 'true') {
-      navigate('/dashboard')
-    } else if (isAuthenticated && profileCompleted !== 'true') {
-      navigate('/profile-setup')
+
+    if (isAdminAuthenticated === 'true') {
+      navigate('/admin')
+      return
+    }
+
+    if (!isAdminLoginMode) {
+      if (isAuthenticated && profileCompleted === 'true') {
+        navigate('/dashboard')
+      } else if (isAuthenticated && profileCompleted !== 'true') {
+        navigate('/profile-setup')
+      }
     }
 
     return () => {
       document.body.classList.remove('system-cursor')
     }
-  }, [navigate])
+  }, [location.search, navigate])
 
   const handleChange = (e) => {
     setFormData({
@@ -52,8 +63,31 @@ const Login = () => {
 
     // Simulate authentication delay
     setTimeout(() => {
+      let adminAccounts = []
+      try {
+        const savedAdmins = localStorage.getItem('adminAccounts')
+        adminAccounts = savedAdmins ? JSON.parse(savedAdmins) : []
+      } catch {
+        adminAccounts = []
+      }
+
+      const matchingAdmin = adminAccounts.find(
+        (admin) =>
+          admin.email === formData.email.toLowerCase() &&
+          admin.password === formData.password &&
+          admin.status === 'active'
+      )
+
+      if (matchingAdmin) {
+        localStorage.setItem('adminAuthenticated', 'true')
+        localStorage.setItem('adminLoginEmail', matchingAdmin.email)
+        navigate('/admin')
+        return
+      }
+
       if (formData.email === VALID_EMAIL && formData.password === VALID_PASSWORD) {
         // Authentication successful
+        localStorage.removeItem('adminAuthenticated')
         localStorage.setItem('isAuthenticated', 'true')
         localStorage.setItem('loginEmail', formData.email)
         

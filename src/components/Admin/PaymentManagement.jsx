@@ -1,65 +1,111 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { motion } from 'framer-motion'
 import './PaymentManagement.css'
 
-// Sample payment data - Replace with actual API data
-const samplePayments = [
-  {
-    id: 'PAY001',
-    studentName: 'Rahul Kumar',
-    email: 'rahul.kumar@example.com',
-    college: 'IIT Delhi',
-    department: 'Computer Science',
-    year: '3rd Year',
-    event: 'Coding Competition',
-    amount: 500,
-    status: 'completed',
-    date: '2026-02-10',
-    transactionId: 'TXN1234567890',
-    paymentMethod: 'UPI'
-  },
-  {
-    id: 'PAY002',
-    studentName: 'Priya Sharma',
-    email: 'priya.sharma@example.com',
-    college: 'NIT Trichy',
-    department: 'Electrical Engineering',
-    year: '2nd Year',
-    event: 'Robo Wars',
-    amount: 1000,
-    status: 'completed',
-    date: '2026-02-11',
-    transactionId: 'TXN1234567891',
-    paymentMethod: 'Card'
-  },
-  {
-    id: 'PAY003',
-    studentName: 'Amit Singh',
-    email: 'amit.singh@example.com',
-    college: 'BITS Pilani',
-    department: 'Mechanical Engineering',
-    year: '4th Year',
-    event: 'Design Challenge',
-    amount: 750,
-    status: 'pending',
-    date: '2026-02-12',
-    transactionId: 'TXN1234567892',
-    paymentMethod: 'UPI'
+const normalizePayments = (records) => {
+  if (!Array.isArray(records)) return []
+
+  return records.map((payment, index) => ({
+    id: payment.id || `PAY${index + 1}`,
+    utrNo: payment.utrNo || payment.paymentUTR || payment.transactionId || 'N/A',
+    studentCode: payment.studentCode || payment.studentId || 'N/A',
+    studentName: payment.studentName || payment.name || 'N/A',
+    email: payment.email || 'N/A',
+    college: payment.college || 'N/A',
+    department: payment.department || 'N/A',
+    year: payment.year || 'N/A',
+    event: payment.event || 'Refresko 2026 Registration',
+    amount: Number(payment.amount) || 500,
+    status: payment.status || 'pending',
+    date: payment.date || new Date().toISOString(),
+    transactionId: payment.transactionId || 'N/A',
+    paymentMethod: payment.paymentMethod || 'UPI',
+    screenshot: payment.screenshot || payment.paymentScreenshot || null,
+    screenshotName: payment.screenshotName || payment.paymentScreenshotName || ''
+  }))
+}
+
+const loadPaymentsFromLocalStorage = () => {
+  try {
+    const savedPayments = localStorage.getItem('paymentSubmissions')
+    const parsedPayments = savedPayments ? JSON.parse(savedPayments) : []
+    const normalized = normalizePayments(parsedPayments)
+
+    if (normalized.length > 0) {
+      return normalized
+    }
+
+    const legacyUtr = localStorage.getItem('paymentUTR')
+    const legacyTxnId = localStorage.getItem('transactionId')
+    const legacyStudentProfile = localStorage.getItem('studentProfile')
+
+    if (!legacyUtr && !legacyTxnId) {
+      return []
+    }
+
+    let parsedProfile = {}
+    try {
+      parsedProfile = legacyStudentProfile ? JSON.parse(legacyStudentProfile) : {}
+    } catch {
+      parsedProfile = {}
+    }
+
+    return normalizePayments([
+      {
+        id: `PAY${Date.now()}`,
+        utrNo: legacyUtr || legacyTxnId || 'N/A',
+        studentCode: parsedProfile.studentId || 'N/A',
+        studentName: parsedProfile.name || 'N/A',
+        email: parsedProfile.email || 'N/A',
+        department: parsedProfile.department || 'N/A',
+        year: parsedProfile.year || 'N/A',
+        amount: 500,
+        status: 'pending',
+        date: new Date().toISOString(),
+        transactionId: legacyTxnId || 'N/A',
+        paymentMethod: 'UPI',
+        screenshotName: localStorage.getItem('paymentScreenshotName') || ''
+      }
+    ])
+  } catch {
+    return []
   }
-]
+}
 
 const PaymentManagement = () => {
-  const [payments, setPayments] = useState(samplePayments)
+  const [payments, setPayments] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
   const [selectedPayment, setSelectedPayment] = useState(null)
 
+  useEffect(() => {
+    const refreshPayments = () => {
+      setPayments(loadPaymentsFromLocalStorage())
+    }
+
+    refreshPayments()
+
+    const handleStorageUpdate = (event) => {
+      if (event.key === 'paymentSubmissions') {
+        refreshPayments()
+      }
+    }
+
+    window.addEventListener('storage', handleStorageUpdate)
+    window.addEventListener('paymentSubmissionsUpdated', refreshPayments)
+
+    return () => {
+      window.removeEventListener('storage', handleStorageUpdate)
+      window.removeEventListener('paymentSubmissionsUpdated', refreshPayments)
+    }
+  }, [])
+
   const filteredPayments = payments.filter(payment => {
     const matchesSearch = 
       payment.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.id.toLowerCase().includes(searchTerm.toLowerCase())
+      payment.studentCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      payment.utrNo.toLowerCase().includes(searchTerm.toLowerCase())
     
     const matchesStatus = filterStatus === 'all' || payment.status === filterStatus
 
@@ -161,7 +207,7 @@ const PaymentManagement = () => {
           </svg>
           <input
             type="text"
-            placeholder="Search by name, email, or payment ID..."
+            placeholder="Search by transaction ID, student code, or name..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -199,14 +245,13 @@ const PaymentManagement = () => {
         <table className="payment-table">
           <thead>
             <tr>
-              <th>Payment ID</th>
+              <th>UTR No.</th>
+              <th>Student Code</th>
               <th>Student Name</th>
-              <th>College</th>
               <th>Department</th>
-              <th>Event</th>
+              <th>Year</th>
               <th>Amount</th>
-              <th>Status</th>
-              <th>Date</th>
+              <th>Date &amp; Time</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -218,23 +263,13 @@ const PaymentManagement = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
               >
-                <td className="payment-id">{payment.id}</td>
-                <td>
-                  <div className="student-info">
-                    <span className="student-name">{payment.studentName}</span>
-                    <span className="student-email">{payment.email}</span>
-                  </div>
-                </td>
-                <td>{payment.college}</td>
+                <td className="payment-id">{payment.utrNo}</td>
+                <td>{payment.studentCode}</td>
+                <td className="student-name">{payment.studentName}</td>
                 <td>{payment.department}</td>
-                <td>{payment.event}</td>
+                <td>{payment.year}</td>
                 <td className="amount">₹{payment.amount}</td>
-                <td>
-                  <span className={`status-badge ${payment.status}`}>
-                    {payment.status}
-                  </span>
-                </td>
-                <td>{new Date(payment.date).toLocaleDateString()}</td>
+                <td>{new Date(payment.date).toLocaleString()}</td>
                 <td>
                   <div className="action-buttons">
                     <button
@@ -304,8 +339,8 @@ const PaymentManagement = () => {
                   <span className="value">{selectedPayment.id}</span>
                 </div>
                 <div className="detail-row">
-                  <span className="label">Transaction ID:</span>
-                  <span className="value">{selectedPayment.transactionId}</span>
+                  <span className="label">UTR No:</span>
+                  <span className="value">{selectedPayment.utrNo}</span>
                 </div>
                 <div className="detail-row">
                   <span className="label">Student Name:</span>
@@ -335,6 +370,12 @@ const PaymentManagement = () => {
                   <span className="label">Payment Method:</span>
                   <span className="value">{selectedPayment.paymentMethod}</span>
                 </div>
+                {selectedPayment.screenshot && (
+                  <div className="detail-row">
+                    <span className="label">Screenshot:</span>
+                    <span className="value">{selectedPayment.screenshotName || 'Uploaded'}</span>
+                  </div>
+                )}
                 <div className="detail-row">
                   <span className="label">Date:</span>
                   <span className="value">{new Date(selectedPayment.date).toLocaleString()}</span>

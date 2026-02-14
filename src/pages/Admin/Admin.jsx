@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import CustomCursor from '../../components/CustomCursor/CustomCursor'
@@ -10,8 +10,16 @@ const Admin = () => {
   const [activeTab, setActiveTab] = useState('payments')
   const navigate = useNavigate()
 
+  useEffect(() => {
+    const isAdminAuthenticated = localStorage.getItem('adminAuthenticated')
+    if (isAdminAuthenticated !== 'true') {
+      navigate('/login?role=admin')
+    }
+  }, [navigate])
+
   const handleLogout = () => {
-    // Add logout logic here
+    localStorage.removeItem('adminAuthenticated')
+    localStorage.removeItem('adminLoginEmail')
     navigate('/')
   }
 
@@ -35,7 +43,7 @@ const Admin = () => {
             <p>Supreme Knowledge Foundation</p>
           </div>
 
-          <button className="logout-btn interactive" onClick={handleLogout}>
+          <button className="admin-logout-btn interactive" onClick={handleLogout}>
             <span>LOGOUT</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>

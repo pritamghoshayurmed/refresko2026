@@ -291,6 +291,82 @@
   text-align: center;
 }
 
+.payment-proof-section {
+  text-align: left;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 20px;
+}
+
+.payment-proof-section h3 {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  color: var(--color-text);
+  letter-spacing: 0.05em;
+  margin-bottom: 16px;
+}
+
+.proof-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.proof-field label {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.proof-field input[type="file"],
+.proof-field input[type="text"] {
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(10, 10, 10, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.proof-field input[type="file"]::file-selector-button {
+  margin-right: 12px;
+  padding: 8px 12px;
+  background: rgba(255, 0, 51, 0.18);
+  border: 1px solid rgba(255, 0, 51, 0.4);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+.proof-field input[type="file"]:focus,
+.proof-field input[type="text"]:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(255, 0, 51, 0.2);
+}
+
+.field-hint {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.field-hint.success {
+  color: #00ff64;
+}
+
+.payment-error {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-primary);
+  margin-bottom: 12px;
+}
+
 .payment-confirm-btn {
   width: 100%;
   padding: 18px 40px;
@@ -334,12 +410,6 @@
 .payment-confirm-btn span {
   position: relative;
   z-index: 1;
-}
-
-.payment-note {
-  font-family: var(--font-body);
-  font-size: 0.85rem;
-  color: var(--color-text-muted);
 }
 
 /* Processing State */

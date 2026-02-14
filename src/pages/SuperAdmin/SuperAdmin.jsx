@@ -7,6 +7,7 @@ import PaymentAmountManagement from '../../components/SuperAdmin/PaymentAmountMa
 import PaymentManagement from '../../components/Admin/PaymentManagement'
 import Analytics from '../../components/Admin/Analytics'
 import StudentManagement from '../../components/SuperAdmin/StudentManagement'
+import AdminLoginManagement from '../../components/SuperAdmin/AdminLoginManagement'
 import './SuperAdmin.css'
 
 const SuperAdmin = () => {
@@ -117,6 +118,19 @@ const SuperAdmin = () => {
             </svg>
             <span>STUDENT ACCOUNTS</span>
           </motion.button>
+
+          <motion.button
+            className={`nav-tab interactive ${activeTab === 'admin-logins' ? 'active' : ''}`}
+            onClick={() => setActiveTab('admin-logins')}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <span>ADMIN LOGIN CONTROL</span>
+          </motion.button>
         </div>
       </nav>
 
@@ -180,6 +194,18 @@ const SuperAdmin = () => {
               transition={{ duration: 0.3 }}
             >
               <StudentManagement />
+            </motion.div>
+          )}
+
+          {activeTab === 'admin-logins' && (
+            <motion.div
+              key="admin-logins"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <AdminLoginManagement />
             </motion.div>
           )}
         </AnimatePresence>

@@ -48,11 +48,57 @@
   box-shadow: 0 0 20px rgba(255, 0, 51, 0.4);
 }
 
-/* Students Grid */
-.students-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  gap: 30px;
+/* Students Table */
+.students-table-container {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow-x: auto;
+}
+
+.students-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+.students-table thead {
+  background: rgba(255, 0, 51, 0.1);
+}
+
+.students-table th {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-align: left;
+  padding: 16px 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255, 0, 51, 0.3);
+}
+
+.students-table td {
+  padding: 16px 14px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--color-text);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.students-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.student-id-cell {
+  font-family: var(--font-mono);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.student-name-cell {
+  font-weight: 600;
+  color: var(--color-secondary);
 }
 
 .student-card {
@@ -192,6 +238,12 @@
   gap: 10px;
 }
 
+.student-actions.compact {
+  display: flex;
+  gap: 8px;
+  grid-template-columns: none;
+}
+
 .action-btn {
   display: flex;
   align-items: center;
@@ -218,6 +270,12 @@
   color: #0096ff;
 }
 
+.action-btn.view:hover {
+  background: rgba(0, 255, 255, 0.15);
+  border-color: #00e5ff;
+  color: #00e5ff;
+}
+
 .action-btn.reset:hover {
   background: rgba(255, 165, 0, 0.2);
   border-color: #ffa500;
@@ -234,6 +292,32 @@
   background: rgba(255, 0, 51, 0.2);
   border-color: var(--color-primary);
   color: var(--color-primary);
+}
+
+.student-full-details {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.full-detail-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.full-detail-row span {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.full-detail-row strong {
+  color: var(--color-secondary);
+  font-size: 0.92rem;
+  text-align: right;
 }
 
 /* Modal Overlay */
@@ -386,12 +470,12 @@
     min-width: 100%;
   }
 
-  .students-grid {
+  .student-actions {
     grid-template-columns: 1fr;
   }
 
-  .student-actions {
-    grid-template-columns: 1fr;
+  .student-actions.compact {
+    flex-direction: column;
   }
 
   .form-row {
@@ -409,17 +493,13 @@
 }
 
 @media (max-width: 480px) {
-  .student-card {
-    padding: 20px;
+  .students-table th,
+  .students-table td {
+    padding: 12px 10px;
   }
 
-  .student-avatar {
-    width: 50px;
-    height: 50px;
-    font-size: 1.1rem;
-  }
-
-  .student-basic-info h3 {
-    font-size: 1.2rem;
+  .action-btn {
+    font-size: 0.8rem;
+    padding: 8px 10px;
   }
 }

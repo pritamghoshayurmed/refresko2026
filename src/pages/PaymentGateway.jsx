@@ -9,6 +9,10 @@ const PaymentGateway = () => {
   const [studentProfile, setStudentProfile] = useState(null)
   const [paymentStatus, setPaymentStatus] = useState('pending') // pending, processing, success
   const [transactionId, setTransactionId] = useState('')
+  const [utrNumber, setUtrNumber] = useState('')
+  const [paymentScreenshot, setPaymentScreenshot] = useState(null)
+  const [paymentScreenshotName, setPaymentScreenshotName] = useState('')
+  const [formError, setFormError] = useState('')
 
   useEffect(() => {
     document.body.classList.add('system-cursor')
@@ -41,7 +45,67 @@ const PaymentGateway = () => {
     }
   }, [navigate])
 
+  const handleScreenshotUpload = (event) => {
+    const file = event.target.files?.[0]
+
+    if (!file) {
+      setPaymentScreenshot(null)
+      setPaymentScreenshotName('')
+      return
+    }
+
+    if (!file.type.startsWith('image/')) {
+      setFormError('Please upload a valid image file for payment screenshot')
+      setPaymentScreenshot(null)
+      setPaymentScreenshotName('')
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onload = () => {
+      setPaymentScreenshot(reader.result)
+      setPaymentScreenshotName(file.name)
+      setFormError('')
+    }
+    reader.readAsDataURL(file)
+  }
+
   const handleConfirmPayment = () => {
+    const normalizedUtr = utrNumber.trim().toUpperCase()
+    const currentStudentId = studentProfile?.studentId || ''
+
+    if (!paymentScreenshot) {
+      setFormError('Please upload payment screenshot before submitting')
+      return
+    }
+
+    if (!normalizedUtr) {
+      setFormError('Please enter UTR number')
+      return
+    }
+
+    if (!/^[A-Z0-9]{8,30}$/.test(normalizedUtr)) {
+      setFormError('UTR must be 8-30 characters and contain only letters and numbers')
+      return
+    }
+
+    let usedUtrRegistry = {}
+    try {
+      const savedRegistry = localStorage.getItem('usedUtrRegistry')
+      usedUtrRegistry = savedRegistry ? JSON.parse(savedRegistry) : {}
+    } catch {
+      usedUtrRegistry = {}
+    }
+
+    const existingOwner = usedUtrRegistry[normalizedUtr]
+    if (existingOwner && existingOwner !== currentStudentId) {
+      setFormError('This UTR number is already used by another user. Please check and enter a unique UTR.')
+      return
+    }
+
+    usedUtrRegistry[normalizedUtr] = currentStudentId
+    localStorage.setItem('usedUtrRegistry', JSON.stringify(usedUtrRegistry))
+    setFormError('')
     setPaymentStatus('processing')
     
     // Simulate payment processing
@@ -53,6 +117,45 @@ const PaymentGateway = () => {
       // Update localStorage with payment info
       localStorage.setItem('paymentCompleted', 'true')
       localStorage.setItem('transactionId', txnId)
+      localStorage.setItem('paymentUTR', normalizedUtr)
+      localStorage.setItem('paymentScreenshotName', paymentScreenshotName)
+
+      const submittedPayment = {
+        id: `PAY${Date.now()}`,
+        utrNo: normalizedUtr,
+        studentCode: studentProfile.studentId || 'N/A',
+        studentName: studentProfile.name || 'N/A',
+        email: studentProfile.email || '',
+        department: studentProfile.department || 'N/A',
+        year: studentProfile.year || 'N/A',
+        amount: 500,
+        date: new Date().toISOString(),
+        status: 'pending',
+        transactionId: txnId,
+        screenshotName: paymentScreenshotName,
+        hasScreenshot: Boolean(paymentScreenshot),
+        foodPreference
+      }
+
+      let existingSubmissions = []
+      try {
+        const savedSubmissions = localStorage.getItem('paymentSubmissions')
+        existingSubmissions = savedSubmissions ? JSON.parse(savedSubmissions) : []
+      } catch {
+        existingSubmissions = []
+      }
+
+      const updatedSubmissions = [submittedPayment, ...existingSubmissions].slice(0, 200)
+      localStorage.setItem('paymentSubmissions', JSON.stringify(updatedSubmissions))
+
+      if (paymentScreenshot) {
+        try {
+          localStorage.setItem(`paymentScreenshot:${normalizedUtr}`, paymentScreenshot)
+        } catch {
+          console.warn('Payment screenshot skipped due to localStorage size limit')
+        }
+      }
+      window.dispatchEvent(new Event('paymentSubmissionsUpdated'))
       
       // Redirect to dashboard after 3 seconds
       setTimeout(() => {
@@ -186,12 +289,44 @@ const PaymentGateway = () => {
               </div>
 
               <div className="payment-actions">
-                <button className="payment-confirm-btn" onClick={handleConfirmPayment}>
-                  <span>I Have Made the Payment</span>
-                </button>
-                <p className="payment-note">
-                  Click above after completing the payment transaction
-                </p>
+                <div className="payment-proof-section">
+                  <h3>Upload Payment Proof</h3>
+
+                  <div className="proof-field">
+                    <label htmlFor="paymentScreenshot">Payment Screenshot</label>
+                    <input
+                      id="paymentScreenshot"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleScreenshotUpload}
+                    />
+                    {paymentScreenshotName && (
+                      <p className="field-hint success">Selected: {paymentScreenshotName}</p>
+                    )}
+                  </div>
+
+                  <div className="proof-field">
+                    <label htmlFor="utrNumber">UTR Number</label>
+                    <input
+                      id="utrNumber"
+                      type="text"
+                      value={utrNumber}
+                      onChange={(event) => {
+                        setUtrNumber(event.target.value)
+                        if (formError) setFormError('')
+                      }}
+                      placeholder="Enter unique UTR"
+                      autoComplete="off"
+                    />
+                    <p className="field-hint">UTR must be unique for each user</p>
+                  </div>
+
+                  {formError && <p className="payment-error">{formError}</p>}
+
+                  <button className="payment-confirm-btn" onClick={handleConfirmPayment}>
+                    <span>Submit Payment Proof</span>
+                  </button>
+                </div>
               </div>
             </div>
           </motion.div>
@@ -226,9 +361,9 @@ const PaymentGateway = () => {
             >
               ✓
             </motion.div>
-            <h2>Payment Successful!</h2>
+            <h2>Payment Under Review</h2>
             <p className="success-message">
-              Your registration payment has been received
+              Your payment has been sent to admin for approval
             </p>
             <div className="txn-details">
               <span>Transaction ID:</span>
